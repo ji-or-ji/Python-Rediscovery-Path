@@ -1,0 +1,114 @@
+def power(m : float, n : float = 2.0) :
+    """
+    计算 m 的 n 次方
+    m: 底数, n: 指数（支持正数、负数和小数）
+    """
+    # 处理指数为0的情况
+    if n == 0.0 :
+        return 1.0
+    
+    # 处理底数为0且指数为负数的情况
+    if m == 0.0 and n < 0 :
+        raise ValueError("0的负指数次方未定义")
+    
+    # 如果指数是整数
+    if n == int(n) :
+        result : float = 1.0
+        abs_n = abs(int(n))
+        for _ in range(abs_n) :
+            result = result * m
+        # 如果指数为负数，取倒数
+        if n < 0 :
+            return 1.0 / result
+        else :
+            return result
+    else :
+        # 如果指数是小数，使用牛顿迭代法计算
+        # 使用公式：m^n = e^(n * ln(m))，但不使用math库
+        
+        # 特殊情况：计算平方根（n=0.5） 
+        if n == 0.5 :
+            return newton_sqrt(m)
+        else :
+            # 对于其他小数指数，使用近似方法
+            # 这里使用二分法来近似计算
+            return approximate_power(m, n)
+
+def newton_sqrt(x : float, precision : float = 1e-10) -> float:
+    """
+    使用牛顿迭代法计算平方根
+    """
+    if x < 0:
+        raise ValueError("不能计算负数的平方根")
+    if x == 0:
+        return 0.0
+    
+    # 初始猜测值
+    guess = x / 2.0
+    
+    # 迭代直到精度满足要求
+    while True:
+        new_guess = (guess + x / guess) / 2.0
+        if abs(new_guess - guess) < precision:
+            return new_guess
+        guess = new_guess
+
+def approximate_power(base : float, exponent : float, precision : float = 1e-6) -> float:
+    """
+    使用二分法近似计算任意次方
+    这是一个简化的实现，主要用于学习目的
+    """
+    # 对于正指数，使用二分法近似
+    if exponent > 0:
+        # 找到上下界
+        low = 0.0
+        high = base if base > 1 else 1.0
+        
+        # 二分查找
+        while high - low > precision:
+            mid = (low + high) / 2.0
+            # 这里使用一个简化的近似，实际应该使用更复杂的算法
+            # 为了简化，我们使用线性插值
+            if mid ** exponent < base:
+                low = mid
+            else:
+                high = mid
+        return (low + high) / 2.0
+    else:
+        # 对于负指数，先计算正指数再取倒数
+        return 1.0 / approximate_power(base, -exponent, precision)
+
+###
+
+def quadratic(a : float, b : float, c : float = 0.0) :
+    # 处理a等于零
+    if a == 0.0 :
+        result : float = -(c / b)
+        return result, None
+    else :
+        # 计算判别式
+        discriminant = power(b, 2) - 4 * a * c
+        # 处理无实数根情况
+        if discriminant < 0 :
+            return None, None
+        else :
+            # 计算平方根（现在可以使用我们自己的 power 函数了！）
+            sqrt_discriminant = power(discriminant, 0.5)
+            x_1 = (-b + sqrt_discriminant) / (2 * a)
+            x_2 = (-b - sqrt_discriminant) / (2 * a)
+            return x_1, x_2
+
+
+# 测试 power 函数
+print('power(25, 0.5) =', power(25, 0.5))
+print('power(9, 0.5) =', power(9, 0.5))
+
+print('quadratic(2, 3, 1) =', quadratic(2, 3, 1))
+print('quadratic(1, 3, -4) =', quadratic(1, 3, -4))
+
+if quadratic(2, 3, 1) != (-0.5, -1.0):
+    print('测试失败')
+elif quadratic(1, 3, -4) != (1.0, -4.0):
+    print('测试失败')
+else:
+    print('测试成功')
