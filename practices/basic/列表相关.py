@@ -6,11 +6,11 @@ L = ['Michael', 'Sarah', 'Tracy', 'Bob', 'Jack']
 squares = [x**2 for x in range(1, 11)]
 print("数字的平方:", squares)
 
-# 2. 生成字符串组合（修复你的代码）
+# 2. 生成字符串组合
 # 如果你想要生成 "11455141919810" 中每个数字与 1-99 的组合
 combinations = [i + str(a) for i in "11455141919810" for a in range(1, 100)]
 print("字符串组合示例:", combinations[:10])  # 只显示前10个
-
+print("=" * 50)
 # 3. 过滤偶数
 even_numbers = [x for x in range(1, 21) if x % 2 == 0]
 print("1-20的偶数:", even_numbers)
